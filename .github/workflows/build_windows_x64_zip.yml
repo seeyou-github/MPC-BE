@@ -27,12 +27,12 @@ jobs:
 
       - name: Clean
         run: |
-          .\\build.bat Clean x64 NoWait
+          .\\build.bat Clean x64 All
         shell: pwsh
 
       - name: Build MPC-BE x64 Zip
         run: |
-          .\\build.bat Build Package x64 NoWait
+          .\\build.bat Build x64 Release Zip
         shell: pwsh
 
       - name: Upload Zip x64

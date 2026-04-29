@@ -199,6 +199,13 @@ void CHTTPAsync::Close()
 
 HRESULT CHTTPAsync::Connect(LPCWSTR lpszURL, DWORD dwTimeOut/* = INFINITE*/, LPCWSTR lpszCustomHeader/* = L""*/)
 {
+	UNREFERENCED_PARAMETER(lpszURL);
+	UNREFERENCED_PARAMETER(dwTimeOut);
+	UNREFERENCED_PARAMETER(lpszCustomHeader);
+
+	// Network is intentionally disabled for offline-only builds.
+	return E_ACCESSDENIED;
+
 	m_url_redirect_str.Empty();
 
 	for (;;) {

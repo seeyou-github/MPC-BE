@@ -163,9 +163,14 @@ namespace YT_DLP
 		OpenFileData* pOFD
 	)
 	{
+		UNREFERENCED_PARAMETER(url);
+		UNREFERENCED_PARAMETER(youtubeUrllist);
+		UNREFERENCED_PARAMETER(youtubeAudioUrllist);
+		UNREFERENCED_PARAMETER(pOFD);
+
 		y_fields.Empty();
 		YoutubeProfiles.clear();
-		pOFD->Clear();
+		return false;
 
 		// get a copy of the settings
 

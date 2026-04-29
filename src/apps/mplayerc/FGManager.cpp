@@ -702,13 +702,12 @@ HRESULT CFGManager::AddSourceFilterInternal(CFGFilter* pFGF, LPCWSTR lpcwstrFile
 
 	const AM_MEDIA_TYPE* pmt = nullptr;
 
-	hr = E_NOT_VALID_STATE;
 	if (::PathIsURLW(lpcwstrFileName)) {
-		CComQIPtr<IURLSourceFilterLAV> pUSFLAV = pBF.p;
-		if (pUSFLAV) {
-			hr = pUSFLAV->LoadURL(lpcwstrFileName, m_userAgent, m_referrer);
-		}
+		RemoveFilter(pBF);
+		return E_ACCESSDENIED;
 	}
+
+	hr = E_NOT_VALID_STATE;
 
 	if (FAILED(hr)) {
 		CMediaType mt;

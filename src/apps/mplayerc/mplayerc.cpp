@@ -1073,15 +1073,6 @@ BOOL CMPlayerCApp::InitInstance()
 	pFrame->UpdateWindow();
 	pFrame->m_hAccelTable = m_s.hAccel;
 	m_s.WinLircClient.SetHWND(m_pMainWnd->m_hWnd);
-	if (m_s.bWinLirc) {
-		m_s.WinLircClient.Connect(m_s.strWinLircAddr);
-	}
-
-	if (m_s.bUpdaterAutoCheck && m_s.slFiles.empty() && !m_s.fLaunchfullscreen) {
-		if (UpdateChecker::IsTimeToAutoUpdate(m_s.nUpdaterDelay, m_s.tUpdaterLastCheck)) {
-			UpdateChecker::CheckForUpdate(true);
-		}
-	}
 
 	SendCommandLine(m_pMainWnd->m_hWnd);
 	RegisterHotkeys();
@@ -1327,30 +1318,7 @@ void CRemoteCtrlClient::SetHWND(HWND hWnd)
 void CRemoteCtrlClient::Connect(CString addr)
 {
 	CAutoLock cAutoLock(&m_csLock);
-
-	if (m_nStatus == CONNECTING && m_addr == addr) {
-		DLog(L"CRemoteCtrlClient (Connect): already connecting to %s", addr);
-		return;
-	}
-
-	if (m_nStatus == CONNECTED && m_addr == addr) {
-		DLog(L"CRemoteCtrlClient (Connect): already connected to %s", addr);
-		return;
-	}
-
-	m_nStatus = CONNECTING;
-
-	DLog(L"CRemoteCtrlClient (Connect): connecting to %s", addr);
-
-	Close();
-
-	Create();
-
-	CString ip = addr.Left(addr.Find(':')+1).TrimRight(':');
-	int port = wcstol(addr.Mid(addr.Find(':')+1), nullptr, 10);
-
-	__super::Connect(ip, port);
-
+	m_nStatus = DISCONNECTED;
 	m_addr = addr;
 }
 

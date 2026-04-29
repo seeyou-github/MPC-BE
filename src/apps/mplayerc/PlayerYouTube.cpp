@@ -146,42 +146,17 @@ namespace Youtube
 		return {};
 	}
 
-	bool CheckURL(CString url)
-	{
-		url.MakeLower();
+bool CheckURL(CString url)
+{
+	UNREFERENCED_PARAMETER(url);
+	return false;
+}
 
-		if (url.Find(YOUTUBE_URL) != -1
-				|| url.Find(YOUTUBE_URL_A) != -1
-				|| url.Find(YOUTUBE_URL_V) != -1
-				|| url.Find(YOUTUBE_URL_EMBED) != -1
-				|| url.Find(YOUTUBE_URL_SHORTS) != -1
-				|| url.Find(YOUTUBE_URL_CLIP) != -1
-				|| url.Find(YOUTUBE_URL_LIVE) != -1
-				|| url.Find(YOUTU_BE_URL) != -1) {
-			return true;
-		}
-
-		return false;
-	}
-
-	bool CheckPlaylist(CString url)
-	{
-		url.MakeLower();
-
-		if (url.Find(YOUTUBE_PL_URL) != -1
-				|| url.Find(YOUTUBE_USER_URL) != -1
-				|| url.Find(YOUTUBE_CHANNEL_URL) != -1
-				|| url.Find(YOUTUBE_USER_SHORT_URL) != -1
-				|| url.Find(YOUTUBE_URL_LIBRARY) != -1
-				|| (url.Find(YOUTUBE_URL) != -1 && url.Find(L"&list=") != -1)
-				|| (url.Find(YOUTUBE_URL_A) != -1 && url.Find(L"/watch_videos?video_ids") != -1)
-				|| ((url.Find(YOUTUBE_URL_V) != -1 || url.Find(YOUTUBE_URL_EMBED) != -1
-					 || url.Find(YOUTU_BE_URL) != -1 || url.Find(YOUTUBE_URL_SHORTS) != -1) && url.Find(L"list=") != -1)) {
-			return true;
-		}
-
-		return false;
-	}
+bool CheckPlaylist(CString url)
+{
+	UNREFERENCED_PARAMETER(url);
+	return false;
+}
 
 	using urlData = std::vector<char>;
 	static bool URLReadData(LPCWSTR url, urlData& pData, LPCWSTR header = L"")
@@ -1542,11 +1517,16 @@ namespace Youtube
 		return pOFD->fi.Valid();
 	}
 
-	bool Parse_Playlist(CString url, YoutubePlaylist& youtubePlaylist, int& idx_CurrentPlay)
-	{
-		idx_CurrentPlay = 0;
-		youtubePlaylist.clear();
-		if (CheckPlaylist(url)) {
+bool Parse_Playlist(CString url, YoutubePlaylist& youtubePlaylist, int& idx_CurrentPlay)
+{
+	UNREFERENCED_PARAMETER(url);
+	youtubePlaylist.clear();
+	idx_CurrentPlay = 0;
+	return false;
+
+	idx_CurrentPlay = 0;
+	youtubePlaylist.clear();
+	if (CheckPlaylist(url)) {
 #if !USE_GOOGLE_API
 			HandleURL(url);
 
@@ -1890,56 +1870,20 @@ namespace Youtube
 		return false;
 	}
 
-	bool Parse_URL(CString url, YoutubeFields& y_fields)
-	{
-		bool bRet = false;
+bool Parse_URL(CString url, YoutubeFields& y_fields)
+{
+	UNREFERENCED_PARAMETER(url);
+	y_fields.Empty();
+	return false;
+}
 
-		if (CheckURL(url)) {
-			HandleURL(url);
-			const CString videoId = RegExpParse(url.GetString(), videoIdRegExp);
-
-			bRet = ParseMetadata(videoId, y_fields);
-		}
-
-		return bRet;
-	}
-
-	bool Parse_URL(CString url, CString& title, REFERENCE_TIME& duration)
-	{
-		bool bRet = false;
-
-		if (CheckURL(url)) {
-			HandleURL(url);
-			const CString videoId = RegExpParse(url.GetString(), videoIdRegExp);
-
-			if (auto ytcfg = ExtractYtcfg(videoId); !ytcfg.IsEmpty()) {
-				rapidjson::Document json;
-				if (!json.Parse(ytcfg).HasParseError()) {
-					if (auto embedded_player_response = GetValueByPointer(json, "/PLAYER_VARS/embedded_player_response"); embedded_player_response && embedded_player_response->IsString()) {
-						auto str = UrlDecode(embedded_player_response->GetString());
-						if (!json.Parse(str).HasParseError()) {
-							if (auto thumbnailPreviewRenderer = GetValueByPointer(json, "/embedPreview/thumbnailPreviewRenderer"); thumbnailPreviewRenderer && thumbnailPreviewRenderer->IsObject()) {
-								if (auto title_runs = GetValueByPointer(*thumbnailPreviewRenderer, "/title/runs"); title_runs && title_runs->IsArray()) {
-									auto array = title_runs->GetArray();
-									if (!array.Empty()) {
-										getJsonValue(array[0], "text", title);
-										bRet = true;
-									}
-								}
-
-								CStringA videoDurationSeconds;
-								if (getJsonValue(*thumbnailPreviewRenderer, "videoDurationSeconds", videoDurationSeconds)) {
-									duration = atoi(videoDurationSeconds.GetString()) * UNITS;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return bRet;
-	}
+bool Parse_URL(CString url, CString& title, REFERENCE_TIME& duration)
+{
+	UNREFERENCED_PARAMETER(url);
+	title.Empty();
+	duration = 0;
+	return false;
+}
 
 	const YoutubeUrllistItem* GetAudioUrl(const YoutubeProfile* vprofile, const YoutubeUrllist& youtubeAudioUrllist)
 	{

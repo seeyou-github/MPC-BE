@@ -37,12 +37,7 @@ bool UpdateChecker::IsTimeToAutoUpdate(int delay, time_t lastcheck)
 
 void UpdateChecker::CheckForUpdate(bool autocheck)
 {
-	CAutoLock lock(&csUpdating);
-
-	if (!bUpdating) {
-		bUpdating = true;
-		AfxBeginThread(RunCheckForUpdateThread, (LPVOID)autocheck);
-	}
+	UNREFERENCED_PARAMETER(autocheck);
 }
 
 Update_Status UpdateChecker::CheckNewVersion()

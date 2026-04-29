@@ -364,40 +364,20 @@ namespace Content {
 
 	const std::wregex html_mime_regex(L"text/html(?:;\\s*charset=([\"']?)[\\w-]+\\1)?", std::regex_constants::icase);
 
-	const CString GetType(const CString& fn, std::list<CString>* redir)
-	{
+const CString GetType(const CString& fn, std::list<CString>* redir)
+{
 		CUrlParser urlParser;
 		CString ct, body;
 
 		CString realPath(fn);
 		CorrectAceStream(realPath);
 
-		if (::PathIsURLW(realPath) && urlParser.Parse(realPath)) {
-			auto schemeName = urlParser.GetSchemeName();
-			if (_wcsicmp(schemeName, L"pnm") == 0) {
-				return kRealAudioType;
-			}
-
-			if (_wcsicmp(schemeName, L"mms") == 0) {
-				return kASXPlaylistType;
-			}
-
-			if (Connect(fn)) {
-				auto& Content = Contents[fn];
-
-				GetContent(fn, Content);
-
-				if (redir
-						&& (Content.ct == kPLSPlaylistType || Content.ct == kXSPFPlaylistType)) {
-					GetRedirectData(Content);
-				}
-
-				ct = Content.ct;
-				body = Content.body;
-			}
-		} else if (!fn.IsEmpty()) {
-			GetContentTypeByExt(fn, ct);
-		}
+	if (::PathIsURLW(realPath) && urlParser.Parse(realPath)) {
+		UNREFERENCED_PARAMETER(redir);
+		return {};
+	} else if (!fn.IsEmpty()) {
+		GetContentTypeByExt(fn, ct);
+	}
 
 		if (redir && !ct.IsEmpty()) {
 			int playlist_type = PLAYLIST_NONE;
@@ -434,21 +414,19 @@ namespace Content {
 		return ct;
 	}
 
-	namespace Online {
-		const bool CheckConnect(const CString& fn)
-		{
-			CString realPath(fn);
-			CorrectAceStream(realPath);
+namespace Online {
+	const bool CheckConnect(const CString& fn)
+	{
+		CString realPath(fn);
+		CorrectAceStream(realPath);
 
 			CUrlParser urlParser;
-			if (::PathIsURLW(realPath)
-					&& urlParser.Parse(realPath)
-					&& (urlParser.GetScheme() == INTERNET_SCHEME_HTTP || urlParser.GetScheme() == INTERNET_SCHEME_HTTPS)) {
-				return Connect(fn);
-			}
-
-			return true;
+		if (::PathIsURLW(realPath) && urlParser.Parse(realPath)) {
+			return false;
 		}
+
+		return true;
+	}
 
 		void Clear()
 		{

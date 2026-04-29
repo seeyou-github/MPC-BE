@@ -141,81 +141,9 @@ HRESULT CSaveTaskDlg::InitFileCopy()
 	CComPtr<IFileSourceFilter> pReader;
 
 	if (::PathIsURLW(fn)) {
-		CUrlParser urlParser(fn.GetString());
-		const CString protocol = urlParser.GetSchemeName();
-
-		if (protocol == L"http" || protocol == L"https") {
-			CComPtr<IUnknown> pUnk;
-			pUnk.CoCreateInstance(CLSID_3DYDYoutubeSource);
-
-			if (CComQIPtr<IBaseFilter> pSrc = pUnk.p) {
-				m_pGB->AddFilter(pSrc, fn);
-
-				if (!(pReader = pUnk) || FAILED(hr = pReader->Load(fn, nullptr))) {
-					pReader.Release();
-					m_pGB->RemoveFilter(pSrc);
-				}
-			}
-
-			if (!pReader) {
-				m_protocol = protocol::PROTOCOL_HTTP;
-				m_SaveThread = std::thread([this] { SaveHTTP(m_iSubLangDefault); });
-
-				return S_OK;
-			}
-		}
-		else if (protocol == L"udp") {
-			WSADATA wsaData = {};
-			WSAStartup(MAKEWORD(2, 2), &wsaData);
-
-			m_addr.sin_family      = AF_INET;
-			m_addr.sin_port        = htons((u_short)urlParser.GetPortNumber());
-			m_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-
-			ip_mreq imr = { 0 };
-			if (InetPton(AF_INET, urlParser.GetHostName(), &imr.imr_multiaddr.s_addr) != 1) {
-				goto fail;
-			}
-			imr.imr_interface.s_addr = INADDR_ANY;
-
-			if ((m_UdpSocket = socket(AF_INET, SOCK_DGRAM, 0)) != INVALID_SOCKET) {
-				m_WSAEvent = WSACreateEvent();
-				WSAEventSelect(m_UdpSocket, m_WSAEvent, FD_READ);
-
-				DWORD dw = 1;
-				if (setsockopt(m_UdpSocket, SOL_SOCKET, SO_REUSEADDR, (const char*)&dw, sizeof(dw)) == SOCKET_ERROR) {
-					closesocket(m_UdpSocket);
-					m_UdpSocket = INVALID_SOCKET;
-				}
-
-				if (::bind(m_UdpSocket, (struct sockaddr*)&m_addr, sizeof(m_addr)) == SOCKET_ERROR) {
-					closesocket(m_UdpSocket);
-					m_UdpSocket = INVALID_SOCKET;
-				}
-
-				if (IN_MULTICAST(htonl(imr.imr_multiaddr.s_addr))
-						&& (setsockopt(m_UdpSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, (const char*)&imr, sizeof(imr)) == SOCKET_ERROR)) {
-					closesocket(m_UdpSocket);
-					m_UdpSocket = INVALID_SOCKET;
-				}
-
-				dw = 65 * KILOBYTE;
-				if (setsockopt(m_UdpSocket, SOL_SOCKET, SO_RCVBUF, (const char*)&dw, sizeof(dw)) == SOCKET_ERROR) {
-					;
-				}
-
-				// set non-blocking mode
-				u_long param = 1;
-				ioctlsocket(m_UdpSocket, FIONBIO, &param);
-			}
-
-			if (m_UdpSocket != INVALID_SOCKET) {
-				m_protocol = protocol::PROTOCOL_UDP;
-				m_SaveThread = std::thread([this] { SaveUDP(); });
-
-				return S_OK;
-			}
-		}
+		SetFooterIcon(MAKEINTRESOURCEW(IDI_ERROR));
+		SetFooterText(L"Network features are disabled in this build.");
+		return S_FALSE;
 	}
 	else {
 		hr = S_OK;

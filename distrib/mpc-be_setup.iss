@@ -109,10 +109,9 @@ VersionInfoTextVersion={#app_version}
 VersionInfoVersion={#app_version}
 UninstallDisplayIcon={app}\{#mpcbe_exe}
 DefaultDirName={code:GetInstallFolder}
-LicenseFile=..\LICENSE.txt
 OutputDir=.
 SetupIconFile=..\src\apps\mplayerc\res\icon.ico
-AppReadmeFile={app}\Readme.md
+AppReadmeFile=
 WizardImageFile=WizardImageFile.png
 WizardSmallImageFile=WizardSmallImageFile.png
 #if VER >= EncodeVer(6,6,0)
@@ -236,14 +235,8 @@ Source: "{#dxdir}\d3dx9_43.dll";             DestDir: "{app}"; Flags: ignorevers
 Source: "{#bindir_x64}\MPCBEShellExt64.dll"; DestDir: "{app}"; Flags: ignoreversion restartreplace uninsrestartdelete regserver noregerror; Components: mpcbeshellext; Check: IsWin64
 Source: "{#bindir_x86}\MPCBEShellExt.dll";   DestDir: "{app}"; Flags: ignoreversion restartreplace uninsrestartdelete regserver noregerror; Components: mpcbeshellext;
 #ifdef localize
-Source: "{#bindir}\Lang\mpcresources.??.dll";             DestDir: "{app}\Lang"; Flags: ignoreversion; Components: mpcresources
+Source: "{#bindir}\Lang\mpcresources.sc.dll";             DestDir: "{app}\Lang"; Flags: ignoreversion; Components: mpcresources
 #endif
-Source: "..\LICENSE.txt";                  DestDir: "{app}";                             Flags: ignoreversion; Components: main
-Source: "..\docs\Authors.txt";             DestDir: "{app}";                             Flags: ignoreversion; Components: main
-Source: "..\docs\Authors mpc-hc team.txt"; DestDir: "{app}";                             Flags: ignoreversion; Components: main
-Source: "..\docs\Changelog.txt";           DestDir: "{app}";                             Flags: ignoreversion; Components: main
-Source: "..\docs\Changelog.Rus.txt";       DestDir: "{app}";                             Flags: ignoreversion; Components: main
-Source: "..\docs\README.md";               DestDir: "{app}";                             Flags: ignoreversion; Components: main
 Source: "Shaders\*.hlsl";                  DestDir: "{commonappdata}\{#app_name}\Shaders"; Flags: ignoreversion; Components: main;
 Source: "Shaders\*.hlsl";                  DestDir: "{app}\Shaders";                     Flags: ignoreversion; Components: main; Check: IniUsed()
 Source: "Shaders11\*.hlsl";                DestDir: "{commonappdata}\{#app_name}\Shaders11"; Flags: ignoreversion; Components: main;
@@ -275,14 +268,10 @@ Name: {commondesktop}\{#app_name} x64;               Filename: {app}\{#mpcbe_exe
 Name: {userdesktop}\{#app_name} x64;                 Filename: {app}\{#mpcbe_exe};      Comment: {#app_name} {#app_version} x64;        WorkingDir: {app}; IconFilename: {app}\{#mpcbe_exe}; IconIndex: 0; Tasks: desktopicon\user
 Name: {group}\{cm:UninstallProgram,{#app_name} x64}; Filename: {uninstallexe};          Comment: {cm:UninstallProgram,{#app_name} x64}; WorkingDir: {app}
 #endif
-Name: {group}\Changelog;                             Filename: {app}\Changelog.txt;     Comment: {cm:ViewChangelog};                    WorkingDir: {app}
-Name: {group}\ChangelogRus;                          Filename: {app}\Changelog.Rus.txt; Comment: {cm:ViewChangelog};                    WorkingDir: {app}
 Name: {group}\{cm:ProgramOnTheWeb,{#app_name}};      Filename: {#app_url}
 
 [Run]
 Filename: "{app}\{#mpcbe_exe}";      WorkingDir: "{app}"; Flags: nowait postinstall skipifsilent unchecked;           Description: "{cm:LaunchProgram,{#app_name}}"
-Filename: "{app}\Changelog.txt";     WorkingDir: "{app}"; Flags: nowait postinstall skipifsilent unchecked shellexec; Description: "{cm:ViewChangelog}"; Check: IsInactiveLang('ru')
-Filename: "{app}\Changelog.Rus.txt"; WorkingDir: "{app}"; Flags: nowait postinstall skipifsilent unchecked shellexec; Description: "{cm:ViewChangelog}"; Languages: ru
 
 [InstallDelete]
 Type: files; Name: "{userdesktop}\{#app_name}.lnk";   Check: not WizardIsTaskSelected('desktopicon\user')   and IsUpgrade()
@@ -296,6 +285,7 @@ Type: filesandordirs; Name: "{commonappdata}\{#app_name}\Shaders11"; Tasks: rese
 #ifdef localize
 ; remove the old language dlls when upgrading
 Type: files; Name: "{app}\mpcresources.??.dll"
+Type: files; Name: "{app}\Lang\mpcresources.??.dll"
 #endif
 
 [UninstallDelete]

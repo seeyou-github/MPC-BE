@@ -1473,13 +1473,7 @@ int CMPlayerCApp::GetLanguageIndex(CString langcode)
 
 int CMPlayerCApp::GetDefLanguage()
 {
-	const LANGID userlangID = GetUserDefaultUILanguage();
-	for (size_t i = 0; i < languageResourcesCount; i++) {
-		if (userlangID == languageResources[i].localeID) {
-			return (int)i;
-		}
-	}
-	return GetLanguageIndex(ID_LANGUAGE_ENGLISH);
+	return GetLanguageIndex(ID_LANGUAGE_CHINESE_SIMPLIFIED);
 }
 
 void CMPlayerCApp::SetLanguage(int nLanguage, bool bSave/* = true*/)

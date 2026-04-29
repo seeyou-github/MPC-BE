@@ -316,11 +316,7 @@ IF /I "%BUILDCFG%" == "Debug" (
 EXIT /B
 )
 
-FOR %%A IN ("Arabic" "Armenian" "Basque" "Belarusian" "Bulgarian" "Catalan" "Chinese Simplified"
- "Chinese Traditional" "Czech" "Croatian" "Dutch" "French" "German" "Greek" "Hebrew" "Hungarian"
- "Italian" "Japanese" "Korean" "Polish" "Portuguese" "Romanian" "Russian" "Slovak" "Slovenian" "Spanish"
- "Swedish" "Turkish" "Ukrainian"
-) DO (
+FOR %%A IN ("Chinese Simplified") DO (
  TITLE Compiling mpcresources - %%~A^|%1...
  MSBuild.exe mpcresources.sln %MSBUILD_SWITCHES%^
  /target:%BUILDTYPE% /property:Configuration="Release %%~A";Platform=%1
@@ -337,7 +333,7 @@ IF /I "%1" == "Win32" (
 )
 
 IF /I "%SIGN%" == "True" (
-  CALL :SubSign %DIR% mpcresources.??.dll
+  CALL :SubSign %DIR% mpcresources.sc.dll
 )
 
 EXIT /B
@@ -444,7 +440,7 @@ IF /I "%NAME%" == "MPC-BE" (
     COPY /Y /V "..\distrib\VisualElements\mpc-be.VisualElementsManifest.xml" "%PCKG_NAME%" >NUL
   )
   COPY /Y /V "%~1_%ARCH%\mpciconlib.dll"           "%PCKG_NAME%\mpciconlib.dll" >NUL
-  COPY /Y /V "%~1_%ARCH%\Lang\mpcresources.??.dll" "%PCKG_NAME%\Lang\mpcresources.??.dll" >NUL
+  COPY /Y /V "%~1_%ARCH%\Lang\mpcresources.sc.dll" "%PCKG_NAME%\Lang\mpcresources.sc.dll" >NUL
   COPY /Y /V "..\distrib\Shaders\*.hlsl"           "%PCKG_NAME%\Shaders\*.hlsl" >NUL
   COPY /Y /V "..\distrib\Shaders11\*.hlsl"         "%PCKG_NAME%\Shaders11\*.hlsl" >NUL
   COPY /Y /V "..\distrib\VisualElements\*.png"     "%PCKG_NAME%" >NUL
@@ -452,12 +448,6 @@ IF /I "%NAME%" == "MPC-BE" (
   COPY /Y /V "%~1_%ARCH%\*.ax"           "%PCKG_NAME%\*.ax" >NUL
 )
 
-COPY /Y /V "..\LICENSE.txt"                  "%PCKG_NAME%" >NUL
-COPY /Y /V "..\docs\Authors.txt"             "%PCKG_NAME%" >NUL
-COPY /Y /V "..\docs\Authors mpc-hc team.txt" "%PCKG_NAME%" >NUL
-COPY /Y /V "..\docs\Changelog.txt"           "%PCKG_NAME%" >NUL
-COPY /Y /V "..\docs\Changelog.Rus.txt"       "%PCKG_NAME%" >NUL
-COPY /Y /V "..\docs\Readme.md"               "%PCKG_NAME%" >NUL
 
 IF /I "%NAME%" == "MPC-BE" (
   IF /I "%INSTALLER%" == "True" (

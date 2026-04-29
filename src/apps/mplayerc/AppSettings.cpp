@@ -446,7 +446,7 @@ CString CAppSettings::SelectedAudioRenderer() const
 void CAppSettings::ResetSettings()
 {
 	iLanguage = -1;
-	iCurrentLanguage = CMPlayerCApp::GetLanguageIndex(ID_LANGUAGE_ENGLISH);
+	iCurrentLanguage = CMPlayerCApp::GetLanguageIndex(ID_LANGUAGE_CHINESE_SIMPLIFIED);
 
 	iCaptionMenuMode = MODE_SHOWCAPTIONMENU;
 	fHideNavigation = false;

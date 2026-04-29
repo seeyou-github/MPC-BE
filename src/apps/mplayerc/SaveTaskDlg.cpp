@@ -180,8 +180,6 @@ HRESULT CSaveTaskDlg::InitFileCopy()
 		}
 	}
 
-fail:
-
 	CComQIPtr<IBaseFilter> pSrc = pReader.p;
 	if (FAILED(m_pGB->AddFilter(pSrc, fn))) {
 		SetFooterIcon(MAKEINTRESOURCEW(IDI_ERROR));

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * (C) 2003-2006 Gabest
  * (C) 2006-2023 see Authors.txt
  *
@@ -29,7 +29,7 @@ CShaderCombineDlg::CShaderCombineDlg(CWnd* pParent, const bool bD3D11)
 	: CCmdUIDialog(CShaderCombineDlg::IDD, pParent)
 	, m_bEnableD3D11(bD3D11)
 {
-	AfxGetMyApp()->GetAppSavePath(m_AppSavePath);
+	AfxGetMyApp()->GetAppCachePath(m_AppSavePath);
 }
 
 CShaderCombineDlg::~CShaderCombineDlg()
@@ -388,3 +388,4 @@ void CShaderCombineDlg::UpdateShaders(unsigned type)
 		pFrame->EnableShaders2(!!m_chEnable2.GetCheck());
 	}
 }
+

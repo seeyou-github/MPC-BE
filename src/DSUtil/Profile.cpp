@@ -30,7 +30,7 @@
 
 CStringW GetIniProgramDir()
 {
-	CStringW path = GetRenameFileExt(GetModulePath(nullptr), L".ini");
+	CStringW path = GetProgramDir() + L"AppData\\Config\\" + ::PathFindFileNameW(GetRenameFileExt(GetModulePath(nullptr), L".ini"));
 
 	return path;
 }
@@ -39,13 +39,7 @@ CStringW GetIniUserProfile()
 {
 	CStringW path = GetIniProgramDir();
 	const CStringW fname = ::PathFindFileNameW(path);
-
-	PWSTR pathRoamingAppData = nullptr;
-	HRESULT hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &pathRoamingAppData);
-	if (SUCCEEDED(hr)) {
-		path = CStringW(pathRoamingAppData) + L"\\MPC-BE\\" + fname;
-	}
-	CoTaskMemFree(pathRoamingAppData);
+	path = GetProgramDir() + L"AppData\\Config\\" + fname;
 
 	return path;
 }
@@ -54,6 +48,9 @@ CStringW GetIniUserProfile()
 
 CProfile::CProfile()
 {
+	::CreateDirectoryW(GetProgramDir() + L"AppData", nullptr);
+	::CreateDirectoryW(GetProgramDir() + L"AppData\\Config", nullptr);
+
 	CStringW path = GetIniProgramDir();
 	if (::PathFileExistsW(path)) {
 		m_IniPath = path;
@@ -67,7 +64,8 @@ CProfile::CProfile()
 		return;
 	}
 
-	OpenRegistryKey();
+	m_IniPath = GetIniUserProfile();
+	m_bIniProgDir = false;
 }
 
 LONG CProfile::OpenRegistryKey()

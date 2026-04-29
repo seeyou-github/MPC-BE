@@ -11768,7 +11768,7 @@ ShaderC* CMainFrame::GetShader(LPCWSTR label, bool bD3D11)
 
 	if (!pShader) {
 		CString path;
-		if (AfxGetMyApp()->GetAppSavePath(path)) {
+		if (AfxGetMyApp()->GetAppCachePath(path)) {
 			if (bD3D11) {
 				path.AppendFormat(L"Shaders11\\%s.hlsl", label);
 			} else {
@@ -11823,7 +11823,7 @@ ShaderC* CMainFrame::GetShader(LPCWSTR label, bool bD3D11)
 bool CMainFrame::SaveShaderFile(ShaderC* shader, bool bD3D11)
 {
 	CString path;
-	if (AfxGetMyApp()->GetAppSavePath(path)) {
+	if (AfxGetMyApp()->GetAppCachePath(path)) {
 		if (bD3D11) {
 			path.AppendFormat(L"Shaders11\\%s.hlsl", shader->label);
 		} else {
@@ -11858,7 +11858,7 @@ bool CMainFrame::SaveShaderFile(ShaderC* shader, bool bD3D11)
 bool CMainFrame::DeleteShaderFile(LPCWSTR label, bool bD3D11)
 {
 	CString path;
-	if (AfxGetMyApp()->GetAppSavePath(path)) {
+	if (AfxGetMyApp()->GetAppCachePath(path)) {
 		if (bD3D11) {
 			path.AppendFormat(L"Shaders11\\%s.hlsl", label);
 		} else {
@@ -11882,7 +11882,7 @@ bool CMainFrame::DeleteShaderFile(LPCWSTR label, bool bD3D11)
 void CMainFrame::TidyShaderCashe()
 {
 	CString appsavepath;
-	if (!AfxGetMyApp()->GetAppSavePath(appsavepath)) {
+	if (!AfxGetMyApp()->GetAppCachePath(appsavepath)) {
 		return;
 	}
 
@@ -21055,6 +21055,7 @@ void CMainFrame::SaveHistory()
 		historyFile.SaveSessionInfo(m_SessionInfo);
 	}
 }
+
 
 
 

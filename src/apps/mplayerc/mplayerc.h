@@ -102,6 +102,9 @@ public:
 	bool			ChangeSettingsLocation(const SettingsLocation newSetLocation);
 	void			ExportSettings();
 	bool			GetAppSavePath(CString& path);
+	bool			GetAppConfigPath(CString& path);
+	bool			GetAppDataPath(CString& path);
+	bool			GetAppCachePath(CString& path);
 
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();

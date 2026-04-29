@@ -1,4 +1,4 @@
-/*
+﻿/*
  * (C) 2003-2006 Gabest
  * (C) 2006-2023 see Authors.txt
  *
@@ -240,7 +240,7 @@ void CShaderEditorDlg::UpdateShaderList()
 	m_edOutput.SetWindowTextW(L"");
 
 	CString path;
-	if (AfxGetMyApp()->GetAppSavePath(path)) {
+	if (AfxGetMyApp()->GetAppCachePath(path)) {
 		if (m_bD3D11) {
 			path += L"Shaders11\\";
 		} else {
@@ -308,7 +308,7 @@ void CShaderEditorDlg::NewShader()
 	}
 
 	CString path;
-	if (AfxGetMyApp()->GetAppSavePath(path)) {
+	if (AfxGetMyApp()->GetAppCachePath(path)) {
 		if (m_bD3D11) {
 			path.AppendFormat(L"Shaders11\\%s.hlsl", dlg.m_Name);
 		} else {
@@ -469,7 +469,7 @@ void CShaderEditorDlg::OnBnClickedMenu()
 	case M_FOLDER:
 		{
 			CString path;
-			if (AfxGetMyApp()->GetAppSavePath(path)) {
+			if (AfxGetMyApp()->GetAppCachePath(path)) {
 				if (m_bD3D11) {
 					path.Append(L"Shaders11");
 				} else {
@@ -587,3 +587,4 @@ BOOL CShaderEditorDlg::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 
 	return __super::OnSetCursor(pWnd, nHitTest, message);
 }
+

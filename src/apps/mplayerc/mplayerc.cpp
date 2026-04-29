@@ -237,21 +237,24 @@ HWND g_hWnd = nullptr;
 
 bool CMPlayerCApp::GetAppSavePath(CString& path)
 {
-	path.Empty();
+	return GetAppDataPath(path);
+}
 
-	if (m_Profile.GetSettingsLocation() == SETS_PROGRAMDIR) { // If settings ini file found, store stuff in the same folder as the exe file
-		path = GetProgramDir();
-	} else {
-		PWSTR pathRoamingAppData = nullptr;
-		HRESULT hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &pathRoamingAppData);
-		path = CStringW(pathRoamingAppData) + L"\\MPC-BE\\";
-		CoTaskMemFree(pathRoamingAppData);
+bool CMPlayerCApp::GetAppConfigPath(CString& path)
+{
+	path = GetProgramDir() + L"AppData\\Config\\";
+	return true;
+}
 
-		if (FAILED(hr)) {
-			return false;
-		}
-	}
+bool CMPlayerCApp::GetAppDataPath(CString& path)
+{
+	path = GetProgramDir() + L"AppData\\Data\\";
+	return true;
+}
 
+bool CMPlayerCApp::GetAppCachePath(CString& path)
+{
+	path = GetProgramDir() + L"AppData\\cache\\";
 	return true;
 }
 
@@ -989,6 +992,17 @@ BOOL CMPlayerCApp::InitInstance()
 
 	CString appSavePath;
 	GetAppSavePath(appSavePath);
+	CString appConfigPath;
+	GetAppConfigPath(appConfigPath);
+	CString appCachePath;
+	GetAppCachePath(appCachePath);
+
+	EXECUTE_ASSERT(::CreateDirectoryW(GetProgramDir() + L"AppData", nullptr) || GetLastError() == ERROR_ALREADY_EXISTS);
+	EXECUTE_ASSERT(::CreateDirectoryW(appConfigPath, nullptr) || GetLastError() == ERROR_ALREADY_EXISTS);
+	EXECUTE_ASSERT(::CreateDirectoryW(appSavePath, nullptr) || GetLastError() == ERROR_ALREADY_EXISTS);
+	EXECUTE_ASSERT(::CreateDirectoryW(appCachePath, nullptr) || GetLastError() == ERROR_ALREADY_EXISTS);
+	EXECUTE_ASSERT(::CreateDirectoryW(appCachePath + L"Shaders", nullptr) || GetLastError() == ERROR_ALREADY_EXISTS);
+	EXECUTE_ASSERT(::CreateDirectoryW(appCachePath + L"Shaders11", nullptr) || GetLastError() == ERROR_ALREADY_EXISTS);
 
 	if (m_Profile.GetSettingsLocation() != SETS_PROGRAMDIR) {
 		CRegKey key;
@@ -998,36 +1012,21 @@ BOOL CMPlayerCApp::InitInstance()
 		}
 
 		// checking for the existence of the Shader and Shaders11 folders
-		BOOL bShaderDirExists = ::PathFileExistsW(appSavePath + L"Shaders");
-		BOOL bShader11DirExists = ::PathFileExistsW(appSavePath + L"Shaders11");
+		BOOL bShaderDirExists = ::PathFileExistsW(appCachePath + L"Shaders");
+		BOOL bShader11DirExists = ::PathFileExistsW(appCachePath + L"Shaders11");
 
 		// restore shaders if the shader folders is missing only, existing folders do not overwrite
 		if (!bShaderDirExists || !bShader11DirExists) {
-			if (!::PathFileExistsW(appSavePath)) {
-				EXECUTE_ASSERT(::CreateDirectoryW(appSavePath, nullptr));
+			if (!::PathFileExistsW(appCachePath)) {
+				EXECUTE_ASSERT(::CreateDirectoryW(appCachePath, nullptr));
 			}
 
-			PWSTR pathProgramData = nullptr;
-			SHGetKnownFolderPath(FOLDERID_ProgramData, 0, nullptr, &pathProgramData);
-			CString appStorage = CStringW(pathProgramData) + L"\\MPC-BE\\";
-			CoTaskMemFree(pathProgramData);
-
 			if (!bShaderDirExists) {
-				hr = FileOperation(appStorage + L"Shaders", appSavePath, nullptr, FO_COPY, FOF_NO_UI);
-				if (SUCCEEDED(hr)) {
-					DLog(L"CMPlayerCApp::InitInstance(): default Shaders folder restored");
-				} else {
-					DLog(L"CMPlayerCApp::InitInstance(): default Shaders folder are not copied. Error: %s", HR2Str(hr));
-				}
+				EXECUTE_ASSERT(::CreateDirectoryW(appCachePath + L"Shaders", nullptr) || GetLastError() == ERROR_ALREADY_EXISTS);
 			}
 
 			if (!bShader11DirExists) {
-				hr = FileOperation(appStorage + L"Shaders11", appSavePath, nullptr, FO_COPY, FOF_NO_UI);
-				if (SUCCEEDED(hr)) {
-					DLog(L"CMPlayerCApp::InitInstance(): default Shaders11 folder restored");
-				} else {
-					DLog(L"CMPlayerCApp::InitInstance(): default Shaders11 folder are not copied. Error: %s", HR2Str(hr));
-				}
+				EXECUTE_ASSERT(::CreateDirectoryW(appCachePath + L"Shaders11", nullptr) || GetLastError() == ERROR_ALREADY_EXISTS);
 			}
 		}
 	}
